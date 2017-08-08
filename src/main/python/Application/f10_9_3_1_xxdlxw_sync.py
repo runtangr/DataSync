@@ -232,7 +232,7 @@ class SaveDataToDB(SyncSys):
         #add
         # logging
         try:
-            print("Edit ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
+            print("Add ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
             logging.info("Add ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
             self.db.f10_9_3_1_xxdlxw.insert(data)
         except pymongo.errors.AutoReconnect, e:
