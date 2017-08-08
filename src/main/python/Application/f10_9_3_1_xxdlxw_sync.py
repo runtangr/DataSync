@@ -7,6 +7,7 @@ import time
 import datetime
 import pymongo
 import dateutil
+import logging
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.Utils import get_all_stock_codes, get_last_update_info, check_action_config, save_last_update_info, \
     is_continue
@@ -81,11 +82,12 @@ class GetDataFromMssql(SyncSys):
       QueryObj = collection.find_one({"Name":action_name})
 
       if QueryObj is not None:
-          last_request_update_datetime = datetime.datetime.strptime(QueryObj["Timestamp"], "%Y,%m,%d,%H,%M,%S,%f")
+          # last_request_update_datetime = datetime.datetime.strptime(QueryObj["Timestamp"], "%Y,%m,%d,%H,%M,%S,%f")
+          last_request_update_datetime =QueryObj["Timestamp"]
           last_request_rsid =  QueryObj["RsId"]
       else:
           #创建时间
-          pass
+          collection.insert({"Name":action_name, "RsId":"0", "Timestamp":last_request_update_datetime})
 
 
       return last_request_update_datetime, last_request_rsid
@@ -194,19 +196,46 @@ class SaveDataToDB(SyncSys):
       db = client.F10Data3
       return db
 
-  def SaveData(self,MssqlData):
+  def Save(self,MssqlData):
 
     mssql_data =  MssqlData[0]
     Colection = self.db.f10_9_3_1_xxdlxw.find().count()
     AllColection = self.db.collection_names()
-    if Colection == 0:
-        #create
-        map(lambda data:self.db.f10_9_3_1_xxdlxw.insert(data) , mssql_data)
-    else:
-        #add
-        pass
 
-    
+    # map(lambda data:self.db.f10_9_3_1_xxdlxw.insert(data) , mssql_data)
+    map(lambda data: self.SaveData(data), mssql_data)
+    # 写入sync时间
+    last_data = mssql_data[-1]
+
+    self.db.f10_0_1_update_timestamp.update({"Name":"f10_9_3_1_xxdlxw"},
+                                            {"$set":{"RsId":last_data["RsId"], "Timestamp":last_data["UpdateDateTime"]}})
+
+  def SaveData(self, data):
+      #select
+      while True:
+          try:
+            count = self.db.f10_9_3_1_xxdlxw.find({"RsId":data["RsId"]}).count()
+            break
+          except pymongo.errors.AutoReconnect, e:
+            logging.error('AutoReconnect fail\n')
+            time.sleep(2)
+
+      if count > 0:
+        #edit
+        try:
+            #logging
+            print("Edit ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
+            logging.info("Edit ：RsId = {0} Timestamp = {1}".format(data["RsId"],data["UpdateDateTime"]))
+            self.db.f10_9_3_1_xxdlxw.update({"RsId":data["RsId"]},{"$set":data})
+        except pymongo.errors.AutoReconnect, e:
+            logging.error('AutoReconnect fail\n')
+            time.sleep(2)
+      else:
+        #add
+        # logging
+        print("Edit ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
+        logging.info("Add ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
+        self.db.f10_9_3_1_xxdlxw.insert(data)
 
 
 if __name__ == '__main__':
@@ -226,4 +255,4 @@ if __name__ == '__main__':
 
     MssqlData = MssqlObj.GetData(parse_args=parse_args)
 
-    DBObj.SaveData(MssqlData)
+    DBObj.Save(MssqlData)
