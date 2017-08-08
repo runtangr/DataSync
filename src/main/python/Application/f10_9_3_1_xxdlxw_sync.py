@@ -6,11 +6,9 @@ import importlib
 import time
 import datetime
 import pymongo
-import dateutil
+from dateutil.parser import parse
 import logging
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from core.Utils import get_all_stock_codes, get_last_update_info, check_action_config, save_last_update_info, \
-    is_continue
 
 class SyncSys(object):
 
@@ -116,8 +114,8 @@ class GetDataFromMssql(SyncSys):
 
 
           RsId = result[headers.index("RsId")]
-          UpdateDateTime = dateutil.parser.parse(result[headers.index("UpdateDateTime")])
-          ZxDate = dateutil.parser.parse(result[headers.index("ZxDate")])
+          UpdateDateTime = parse(result[headers.index("UpdateDateTime")])
+          ZxDate = parse(result[headers.index("ZxDate")])
           ZiXunId = result[headers.index("ZiXunId")]
           ZiXunType = result[headers.index("ZiXunType")]
           Obj = result[headers.index("Obj")]
@@ -233,9 +231,13 @@ class SaveDataToDB(SyncSys):
       else:
         #add
         # logging
-        print("Edit ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
-        logging.info("Add ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
-        self.db.f10_9_3_1_xxdlxw.insert(data)
+        try:
+            print("Edit ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
+            logging.info("Add ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
+            self.db.f10_9_3_1_xxdlxw.insert(data)
+        except pymongo.errors.AutoReconnect, e:
+            logging.error('AutoReconnect fail\n')
+            time.sleep(2)
 
 
 if __name__ == '__main__':
