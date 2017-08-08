@@ -1,0 +1,18 @@
+FROM python:2.7
+
+ADD ./src /app/src
+ADD ./docs /app/docs
+ADD requirements.txt /app/requirements.txt
+#ADD ./packages /app/packages
+
+workdir /app/
+run apt-get update
+RUN pip install -r requirements.txt -i http://pypi.douban.com/simple --trusted-host pypi.douban.com
+
+workdir /app/packages/
+
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+workdir /app/src/main/python/Application
+
