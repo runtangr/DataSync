@@ -128,7 +128,7 @@ class GetDataFromMssql(SyncSys):
           zhjyr = result[headers.index("zhjyr")]
           qxbgq = parse(result[headers.index("qxbgq")])
           rsstatus = result[headers.index("rsstatus")]
-          rsMainkeyid = result[headers.index("rsMainkeyid")]
+          rsMainkeyid = long(result[headers.index("rsMainkeyid")])
           UpdateDateTime = parse(result[headers.index("UpdateDateTime")])
 
           if Obj is not None:
@@ -229,7 +229,7 @@ class SaveDataToDB(SyncSys):
       #select
       while True:
           try:
-            count = self.db.f10_1_2_qxsj_ex.find({"RsId":data["rsMainkeyid"]}).count()
+            count = self.db.f10_1_2_qxsj_ex.find({"rsMainkeyid":long(data["rsMainkeyid"])}).count()
             break
           except pymongo.errors.AutoReconnect, e:
             logging.error('AutoReconnect fail\n')
