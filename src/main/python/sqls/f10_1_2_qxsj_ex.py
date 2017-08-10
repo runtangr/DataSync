@@ -15,7 +15,7 @@ select top 500
    , '' as zhjyr
    , convert(varchar(26), a.rsDateTime, 121) as UpdateDateTime
    , convert(varchar(8), a.[QxBgq], 112) as qxbgq,
-   a.rsstatus 
+   a.rsstatus,a.rsMainkeyid
 from stocksoftdata.dbo.[sidbStockCoefficient] a with(nolock)
 inner join stocksoftdata.dbo.[commStockCode] b with(nolock) on a.[StockCodeID] = b.rsMainkeyID
 where b.MarketID in(10, 11) and a.rsDateTime >= cast('{UpdateDateTime}' as datetime)
