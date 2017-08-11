@@ -182,7 +182,9 @@ class SaveDataToDB(SyncSys):
 
     map(lambda data: self.SaveData(table_name=table_name,data=data), mssql_data)
     # 写入sync时间
-
+    if len(mssql_data) == 0:
+        logging.warning('data is null!\n')
+        return
     last_data = mssql_data[-1]
 
     self.db.f10_0_1_update_timestamp.update({"Name":table_name},
