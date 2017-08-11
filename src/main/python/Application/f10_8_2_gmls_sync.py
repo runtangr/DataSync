@@ -66,13 +66,13 @@ class GetDataFromMssql(SyncSys):
 
   def get_last_update_info(self,DBObj,action_name, key_value):
       """
-      从f10_0_1_update_timestamp获取上一次请求的UpdateDateTime和RsId,如果取不到，就返回默认值
+      从f10_0_1_update_timestamp获取上一次请求的UpdateDateTime和Seq,如果取不到，就返回默认值
       :param action_name:
       :param key_value:
-      :return: last_request_update_datetime, last_request_rsid
+      :return: last_request_update_datetime, last_request_Seq
       """
       last_request_update_datetime = datetime.datetime(year=1970, month=1, day=1)
-      last_request_rsid = "0"
+      last_request_Seq = "0"
 
       ###这里需要优化
       f10_db = SaveDataToDB.get_db()
@@ -82,21 +82,21 @@ class GetDataFromMssql(SyncSys):
       if QueryObj is not None:
           # last_request_update_datetime = datetime.datetime.strptime(QueryObj["Timestamp"], "%Y,%m,%d,%H,%M,%S,%f")
           last_request_update_datetime =QueryObj["Timestamp"]
-          last_request_rsid =  QueryObj["RsId"]
+          last_request_Seq =  QueryObj["RsId"]
       else:
           #创建时间
           collection.insert({"Name":action_name, "RsId":"0", "Timestamp":last_request_update_datetime})
 
 
-      return last_request_update_datetime, last_request_rsid
+      return last_request_update_datetime, last_request_Seq
 
   def GetArgs(self,DBObj):
 
       last_update_time = datetime.datetime.now()
       parse_args = []
 
-      last_update_time, last_rsid = self.get_last_update_info(DBObj=DBObj,action_name="f10_9_3_3_xxdlyb", key_value="all")
-      parse_args.append(("RsId", last_rsid))
+      last_update_time, last_Seq = self.get_last_update_info(DBObj=DBObj,action_name="f10_8_2_gmls", key_value="all")
+      parse_args.append(("RsId", last_Seq))
 
       parse_args.append(("UpdateDateTime", last_update_time.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]))
       parse_args.append(("ENDDATE", last_update_time.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]))
@@ -108,29 +108,30 @@ class GetDataFromMssql(SyncSys):
       object_mapping = {}
       headers = tables.pop(0)
       max_update_datetime = datetime.datetime(year=1970, month=1, day=1)
-      max_rsid = ""
+      max_Seq = ""
       results = []
       for result in tables:
 
-
-          RsId = result[headers.index("RsId")]
-          UpdateDateTime = parse(result[headers.index("UpdateDateTime")])
-          ZxDate = parse(result[headers.index("ZxDate")])
-          ZiXunId = result[headers.index("ZiXunId")]
-          ZiXunType = result[headers.index("ZiXunType")]
+          Seq = result[headers.index("Seq")]
+          Mtime = result[headers.index("Mtime")]
+          MarketCode = result[headers.index("MarketCode")]
           Obj = result[headers.index("Obj")]
           StockCode = result[headers.index("StockCode")]
           StockName = result[headers.index("StockName")]
-          Title = result[headers.index("Title")]
+          ChangeDate = result[headers.index("ChangeDate")]
+          StockNameLat = result[headers.index("StockNameLat")]
 
           if Obj is not None:
-              result = {"RsId": RsId, "UpdateDateTime": UpdateDateTime, "ZxDate": ZxDate, "ZiXunId": ZiXunId,
-                        "ZiXunType":ZiXunType, "Obj":Obj, "StockCode":StockCode, "StockName":StockName, "Title":Title}
+              result = {"Seq": Seq, "Mtime": Mtime, "MarketCode": MarketCode,
+                         "Obj":Obj,
+                        "StockCode":StockCode, "StockName":StockName,
+                        "ChangeDate":ChangeDate,
+                        "StockNameLat": StockNameLat}
               results.append(result)
 
-      return results, max_update_datetime, max_rsid
+      return results, max_update_datetime, max_Seq
 
-  def GetData(self, action_name = "f10_9_3_3_xxdlyb", parse_args=None):
+  def GetData(self, action_name = "f10_8_2_gmls", parse_args=None):
           try:
               cursor = self.get_cursor()
           except Exception as e:
@@ -162,9 +163,9 @@ class GetDataFromMssql(SyncSys):
           tables = [[x[0] for x in cursor.description]]
           tables.extend(rows)
 
-          results, max_update_datetime, max_rsid = self.get_results(action_name, tables)
+          results, max_update_datetime, max_Seq = self.get_results(action_name, tables)
           cursor.close()
-          return results, max_update_datetime, max_rsid
+          return results, max_update_datetime, max_Seq
 
 
 
@@ -192,28 +193,29 @@ class SaveDataToDB(SyncSys):
   def get_db(cls):
       client = pymongo.MongoClient(os.environ.get("DBHost", "10.3.131.51"),
                                    os.environ.get("DBPort", 27019))
-      db = client[os.environ.get("DBName", "F10Data3")]
+      DBName = os.environ.get("DBName", "F10Data3")
+      db = client[DBName]
       return db
 
   def Save(self,MssqlData):
 
     mssql_data =  MssqlData[0]
-    Colection = self.db.f10_9_3_3_xxdlyb.find().count()
+    Colection = self.db.f10_8_2_gmls.find().count()
     AllColection = self.db.collection_names()
 
-    # map(lambda data:self.db.f10_9_3_3_xxdlyb.insert(data) , mssql_data)
+    # map(lambda data:self.db.f10_8_2_gmls.insert(data) , mssql_data)
     map(lambda data: self.SaveData(data), mssql_data)
     # 写入sync时间
     last_data = mssql_data[-1]
 
-    self.db.f10_0_1_update_timestamp.update({"Name":"f10_9_3_3_xxdlyb"},
-                                            {"$set":{"RsId":last_data["RsId"], "Timestamp":last_data["UpdateDateTime"]}})
+    self.db.f10_0_1_update_timestamp.update({"Name":"f10_8_2_gmls"},
+                                            {"$set":{"Seq":last_data["Seq"], "Timestamp":last_data["Mtime"]}})
 
   def SaveData(self, data):
       #select
       while True:
           try:
-            count = self.db.f10_9_3_3_xxdlyb.find({"RsId":data["RsId"]}).count()
+            count = self.db.f10_8_2_gmls.find({"Seq":data["Seq"]}).count()
             break
           except pymongo.errors.AutoReconnect, e:
             logging.error('AutoReconnect fail\n')
@@ -223,9 +225,9 @@ class SaveDataToDB(SyncSys):
         #edit
         try:
             #logging
-            print("Edit ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
-            logging.info("Edit ：RsId = {0} Timestamp = {1}".format(data["RsId"],data["UpdateDateTime"]))
-            self.db.f10_9_3_3_xxdlyb.update({"RsId":data["RsId"]},{"$set":data})
+            print("Edit ：Seq = {0} Timestamp = {1}".format(data["Seq"], data["Mtime"]))
+            logging.info("Edit ：Seq = {0} Timestamp = {1}".format(data["Seq"],data["Mtime"]))
+            self.db.f10_8_2_gmls.update({"Seq":data["Seq"]},{"$set":data})
         except pymongo.errors.AutoReconnect, e:
             logging.error('AutoReconnect fail\n')
             time.sleep(2)
@@ -233,9 +235,9 @@ class SaveDataToDB(SyncSys):
         #add
         # logging
         try:
-            print("Add ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
-            logging.info("Add ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
-            self.db.f10_9_3_3_xxdlyb.insert(data)
+            print("Add ：Seq = {0} Timestamp = {1}".format(data["Seq"], data["Mtime"]))
+            logging.info("Add ：Seq = {0} Timestamp = {1}".format(data["Seq"], data["Mtime"]))
+            self.db.f10_8_2_gmls.insert(data)
         except pymongo.errors.AutoReconnect, e:
             logging.error('AutoReconnect fail\n')
             time.sleep(2)
