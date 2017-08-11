@@ -173,12 +173,16 @@ class SaveDataToDB(SyncSys):
 
   def Save(self,table_name=None,MssqlData=None):
 
+    if len(MssqlData) == 0:
+        logging.warning('data is null!\n')
+        return
     mssql_data =  MssqlData[0]
     Colection = self.db[table_name].find().count()
     AllColection = self.db.collection_names()
 
     map(lambda data: self.SaveData(table_name=table_name,data=data), mssql_data)
     # 写入sync时间
+
     last_data = mssql_data[-1]
 
     self.db.f10_0_1_update_timestamp.update({"Name":table_name},
