@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 库：QKTZ20160429
+# 库：stocksoftdata 
 __author__ = "Cyh"
 sql = """SELECT TOP 500 CAST(RsID AS VARCHAR) AS RsID, UpdateDateTime, Obj, ZxDate, CountNum,
        ZxType
