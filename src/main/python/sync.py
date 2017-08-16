@@ -29,8 +29,13 @@ if __name__ == '__main__':
                   db_name=os.environ.get("DBName", "F10Data3")
                   )
 
-    parse_args = MssqlObj.GetArgs(table_name =table_name,DBObj =DBObj)
+    while True:
 
-    MssqlData = MssqlObj.GetData(table_name = table_name, parse_args=parse_args)
+        parse_args = MssqlObj.GetArgs(table_name =table_name,DBObj =DBObj)
 
-    DBObj.Save(table_name=table_name , MssqlData=MssqlData)
+        MssqlData = MssqlObj.GetData(table_name = table_name, parse_args=parse_args)
+
+        DBObj.Save(table_name=table_name , MssqlData=MssqlData)
+
+        if len(MssqlData[0]) == 0:
+            break
