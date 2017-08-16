@@ -18,5 +18,5 @@ select top 500
    a.rsstatus,a.rsMainkeyid
 from stocksoftdata.dbo.[sidbStockCoefficient] a with(nolock)
 inner join stocksoftdata.dbo.[commStockCode] b with(nolock) on a.[StockCodeID] = b.rsMainkeyID
-where b.MarketID in(10, 11) and a.rsDateTime >= cast('{UpdateDateTime}' as datetime)
+where b.MarketID in(10, 11) and a.rsDateTime > cast('{UpdateDateTime}' as datetime)
 order by a.rsDateTime"""
