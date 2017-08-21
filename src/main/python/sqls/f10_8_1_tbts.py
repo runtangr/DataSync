@@ -12,7 +12,7 @@ sql = """SELECT TOP 500 a.SEQ AS Seq, a.MTIME AS Mtime, CASE x.TRADE_MKT_REF
        END MarketCode, x.STOCKCODE StockCode, x.STOCKSNAME StockName,
        a.HINT_TYPE_CODE AS HintTypeCode, a.HINT_TYPE_NAME AS HintTypeName,
        a.HINT_DT HintDt, a.ESP_HINT EspHint, a.DECLAREDATE DeclareDate
-  FROM NEWS_ESP_HINT AS a
+  FROM QKTZ20160429.dbo.NEWS_ESP_HINT AS a
   INNER JOIN STK_CODE AS x
           ON a.INNER_CODE = x.INNER_CODE
          AND a.ISVALID = 1
