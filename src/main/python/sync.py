@@ -28,14 +28,24 @@ if __name__ == '__main__':
                   db_port=int(os.environ.get("DBPort", "27019")),
                   db_name=os.environ.get("DBName", "F10Data3")
                   )
+    #全量表
+    full_table = ["f10_1_5_special_stockcodelist",]
+    #全量
+    if table_name in full_table:
+        parse_args = MssqlObj.GetArgs(table_name=table_name, DBObj=DBObj)
 
-    while True:
+        MssqlData = MssqlObj.GetData(table_name=table_name, parse_args=parse_args)
 
-        parse_args = MssqlObj.GetArgs(table_name =table_name,DBObj =DBObj)
+        DBObj.Save(table_name=table_name, MssqlData=MssqlData)
+    #增量
+    else:
+        while True:
 
-        MssqlData = MssqlObj.GetData(table_name = table_name, parse_args=parse_args)
+            parse_args = MssqlObj.GetArgs(table_name =table_name,DBObj =DBObj)
 
-        DBObj.Save(table_name=table_name , MssqlData=MssqlData)
+            MssqlData = MssqlObj.GetData(table_name = table_name, parse_args=parse_args)
 
-        if len(MssqlData[0]) == 0:
-            break
+            DBObj.Save(table_name=table_name , MssqlData=MssqlData)
+
+            if len(MssqlData[0]) == 0:
+                break
