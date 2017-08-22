@@ -19,7 +19,7 @@ sql = """SELECT *
                          AND INNER_CODE = a.INNER_CODE
                          AND CHANGEDATE < a.CHANGEDATE
                        ORDER BY CHANGEDATE DESC
-                  ) AS StockNameLat
+                  ) AS OldStockName
              FROM STK_SNAME_CHNG AS a
              INNER JOIN STK_CODE AS x
                      ON a.INNER_CODE = x.INNER_CODE
