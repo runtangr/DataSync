@@ -9,10 +9,14 @@ sql = """SELECT TOP 500 a.SEQ AS Seq, a.MTIME AS Mtime, CASE x.TRADE_MKT_REF
            WHEN 1 THEN 'SZ'
            WHEN 2 THEN 'SH'
            ELSE ''
-       END MarketCode, x.STOCKCODE StockCode, x.STOCKSNAME StockName,
-       a.HINT_TYPE_CODE AS HintTypeCode, a.HINT_TYPE_NAME AS HintTypeName,
-       a.HINT_DT HintDt, a.ESP_HINT EspHint, a.DECLAREDATE DeclareDate
-  FROM QKTZ20160429.dbo.NEWS_ESP_HINT AS a
+       END MarketCode, x.STOCKCODE StockCode
+	   , cast(x.STOCKSNAME as nvarchar(max)) as StockName
+	   , a.HINT_TYPE_CODE AS HintTypeCode
+	   , cast(a.HINT_TYPE_NAME as nvarchar(max)) AS HintTypeName
+	   , a.HINT_DT as HintDt
+	   , cast(a.ESP_HINT as nvarchar(max)) as EspHint
+	   , a.DECLAREDATE DeclareDate
+  FROM NEWS_ESP_HINT AS a
   INNER JOIN STK_CODE AS x
           ON a.INNER_CODE = x.INNER_CODE
          AND a.ISVALID = 1
