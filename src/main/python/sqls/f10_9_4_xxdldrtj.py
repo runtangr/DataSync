@@ -7,4 +7,4 @@ sql = """SELECT TOP 500 CAST(RsID AS VARCHAR) AS RsID, UpdateDateTime, Obj, ZxDa
  WHERE (   RsID > '{RsId}'
      AND   UpdateDateTime >= '{UpdateDateTime}'
        )
-    OR UpdateDateTime >= '{UpdateDateTime}'"""
+    OR UpdateDateTime > '{UpdateDateTime}'"""
