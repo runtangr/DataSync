@@ -35,5 +35,5 @@ sql = """SELECT *
                         )
             ORDER BY a.MTIME, a.SEQ
        ) AS aa
- WHERE aa.StockNameLat IS NOT NULL
+ WHERE aa.OldStockName IS NOT NULL
  ORDER BY MTIME, Seq"""
