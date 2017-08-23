@@ -28,14 +28,14 @@ class TableGetData(SyncBase.GetDataFromMssql):
             StockCode = result[headers.index("StockCode")]
             StockName = result[headers.index("StockName")]
             ChangeDate = result[headers.index("ChangeDate")]
-            StockNameLat = result[headers.index("StockNameLat")]
+            OldStockName = result[headers.index("OldStockName")]
 
             if Obj is not None:
                 result = {"RsId": RsId, "UpdateDateTime": UpdateDateTime, "MarketCode": MarketCode,
                           "Obj": Obj,
                           "StockCode": StockCode, "StockName": StockName,
                           "ChangeDate": ChangeDate,
-                          "StockNameLat": StockNameLat}
+                          "OldStockName": OldStockName}
                 results.append(result)
 
         return results, max_update_datetime, max_Seq
