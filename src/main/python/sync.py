@@ -29,7 +29,8 @@ if __name__ == '__main__':
                   db_name=os.environ.get("DBName", "F10Data3")
                   )
     #全量表
-    full_table = ["f10_1_5_special_stockcodelist",]
+    full_table = ["f10_1_5_special_stockcodelist",
+                  "f10_1_1_zxzycwsj"]
     #全量
     if table_name in full_table:
         parse_args = MssqlObj.GetArgs(table_name=table_name, DBObj=DBObj)
