@@ -2,12 +2,13 @@
 __author__ = "Sommily"
 sql = """SELECT TOP 500 CAST(dco.SEQ AS VARCHAR) AS RsId,
        CONVERT( VARCHAR(30), dco.MTIME, 126 ) AS UpdateDateTime,
-       CONVERT( VARCHAR(30), dco.MTIME, 120 ) AS ZxDate, dco.DISC_ID AS ZiXunId,
-       'GG' AS ZiXunType, CASE
-                              WHEN stk.TRADE_MKT_REF = 1 THEN 'SZ'
-                              WHEN stk.TRADE_MKT_REF = 2 THEN 'SH'
-                              ELSE CAST(stk.TRADE_MKT_REF AS VARCHAR) + '-'
-                          END + stk.STOCKCODE AS Obj, stk.STOCKCODE AS StockCode,
+       CONVERT( VARCHAR(30), dco.MTIME, 120 ) AS ZxDate,
+       dbo.Date2Str( dco.MTIME ) AS II_ZxDate, dco.DISC_ID AS ZiXunId, 'GG' AS ZiXunType,
+       CASE
+           WHEN stk.TRADE_MKT_REF = 1 THEN 'SZ'
+           WHEN stk.TRADE_MKT_REF = 2 THEN 'SH'
+           ELSE CAST(stk.TRADE_MKT_REF AS VARCHAR) + '-'
+       END + stk.STOCKCODE AS Obj, stk.STOCKCODE AS StockCode,
        stk.STOCKSNAME AS StockName, nm.TITLE AS Title
   FROM DISC_COM AS dco WITH ( NOLOCK )
   INNER JOIN STK_CODE AS stk WITH ( NOLOCK )
