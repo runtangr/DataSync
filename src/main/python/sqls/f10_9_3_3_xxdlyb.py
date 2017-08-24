@@ -2,6 +2,7 @@
 __author__ = "Sommily"
 sql = """SELECT TOP 500 CAST(rrm.SEQ AS VARCHAR(20)) AS RsId,
        CONVERT( VARCHAR(30), rrm.MTIME, 120 ) AS ZxDate,
+	   dbo.Date2Str(rrm.MTIME) AS II_ZxDate,
        CONVERT( VARCHAR(30), rrm.MTIME, 126 ) AS UpdateDateTime, rrm.RES_ID AS ZiXunId,
        'YB' AS ZiXunType, CASE
                               WHEN dd.MKT_TYPE = 1 THEN 'SZ'

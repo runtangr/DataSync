@@ -3,6 +3,7 @@ __author__ = "Cyh"
 sql = """SELECT TOP 500 CAST(dmc.SEQ AS NVARCHAR(MAX)) AS RsId,
        CONVERT( NVARCHAR(30), dmc.CTIME, 121 ) AS UpdateDateTime,
        CONVERT( NVARCHAR(30), dmc.CTIME, 120 ) AS ZxDate,
+	   dbo.Date2Str( dmc.CTIME ) AS II_ZxDate,
        CAST(dmc.DISC_ID AS NVARCHAR(30)) AS ZiXunId,
        CAST(dcr.CLS_NAME AS NVARCHAR(50)) AS ZiXunType, 'SH000001' AS Obj,
        '000001' AS StockCode, '指数' AS StockName,

@@ -1,25 +1,32 @@
 # -*- coding: utf-8 -*-
 __author__ = "Sommily"
 sql = """
-select top 500
-     case when b.MarketID = 10 then 'SH' when b.MarketID = 11 then 'SZ' else '' end + b.StockCode as Obj
-   , b.StockShortName  
-   , convert(varchar(8), a.[DRDate], 112) as [Date]
-   , cast(a.[Coefficient_01] as decimal(20,6)) as HouChuQuanChengShu
-   , cast(a.[Coefficient_02] as decimal(20,6)) as HouQianChuQuanPianYi
-   , cast(a.[Coefficient_11] as decimal(20,6)) as QianChuQuanChengShu
-   , cast(a.[Coefficient_12] as decimal(20,6)) as QianChuQuanPianYi
-   , a.[BonusIssue_Note] as FhkgXinXi
-   , convert(varchar(10), a.[DRDate], 120) as cqcxr
-   , convert(varchar(8), a.[QxDjr], 112) as gqdjr
-   , '' as zhjyr
-   , convert(varchar(26), a.rsDateTime, 121) as UpdateDateTime
-   , convert(varchar(8), a.[QxBgq], 112) as qxbgq,
-   a.rsstatus,a.rsMainkeyid
-from stocksoftdata.dbo.[sidbStockCoefficient] a with(nolock)
-inner join stocksoftdata.dbo.[commStockCode] b with(nolock) on a.[StockCodeID] = b.rsMainkeyID
-where b.MarketID in(10, 11) 
-and ((a.rsDateTime='{UpdateDateTime}' AND a.rsMainkeyid>'{RsId}') or                                           
- a.rsDateTime>'{UpdateDateTime}') 
-order by a.rsDateTime, a.rsMainkeyID
+SELECT TOP 500 CASE
+                   WHEN b.MarketID = 10 THEN 'SH'
+                   WHEN b.MarketID = 11 THEN 'SZ'
+                   ELSE ''
+               END + b.StockCode AS Obj, b.StockShortName,
+       CONVERT( VARCHAR(8), a.DRDate, 112 ) AS Date, dbo.Date2Str( a.DRDate ) AS II_Date,
+       CAST(a.Coefficient_01 AS DECIMAL(20, 6)) AS HouChuQuanChengShu,
+       CAST(a.Coefficient_02 AS DECIMAL(20, 6)) AS HouQianChuQuanPianYi,
+       CAST(a.Coefficient_11 AS DECIMAL(20, 6)) AS QianChuQuanChengShu,
+       CAST(a.Coefficient_12 AS DECIMAL(20, 6)) AS QianChuQuanPianYi,
+       a.BonusIssue_Note AS FhkgXinXi, CONVERT( VARCHAR(10), a.DRDate, 120 ) AS cqcxr,
+       dbo.Date2Str( a.DRDate ) AS II_cqcxr,
+       CONVERT( VARCHAR(8), a.QxDjr, 112 ) AS gqdjr, dbo.Date2Str( a.QxDjr ) AS II_gqdjr,
+       '' AS zhjyr, CONVERT( VARCHAR(26), a.rsDateTime, 121 ) AS UpdateDateTime,
+       CONVERT( VARCHAR(8), a.QxBgq, 112 ) AS qxbgq, dbo.Date2Str( a.QxBgq ) AS II_qxbgq,
+       a.rsStatus, a.rsMainkeyID
+  FROM stocksoftdata.dbo.sidbStockCoefficient AS a WITH ( NOLOCK )
+  INNER JOIN stocksoftdata.dbo.commStockCode AS b WITH ( NOLOCK )
+          ON a.StockCodeID = b.rsMainkeyID
+ WHERE b.MarketID IN (
+                         10, 11
+                     )
+   AND (   (   a.rsDateTime = '{UpdateDateTime}'
+         AND   a.rsMainkeyID > '{RsId}'
+        )
+      OR   a.rsDateTime > '{UpdateDateTime}'
+       )
+ ORDER BY a.rsDateTime, a.rsMainkeyID
 """

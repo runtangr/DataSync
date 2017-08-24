@@ -2,7 +2,7 @@
 __author__ = "Sommily"
 sql = """SELECT *
   FROM (
-           SELECT TOP 500 a.SEQ Seq, a.MTIME Mtime, CASE x.TRADE_MKT_REF
+           SELECT TOP 500 a.SEQ Seq, a.MTIME Mtime,dbo.Date2Str( a.MTIME ) AS II_Mtime, CASE x.TRADE_MKT_REF
                                                   WHEN 1 THEN 'SZ'
                                                   WHEN 2 THEN 'SH'
                                                   ELSE ''
@@ -12,7 +12,7 @@ sql = """SELECT *
                       WHEN 2 THEN 'SH'
                       ELSE ''
                   END MarketCode, x.STOCKCODE StockCode, a.STOCKSNAME StockName,
-                  a.CHANGEDATE ChangeDate,
+                  a.CHANGEDATE ChangeDate,dbo.Date2Str( a.CHANGEDATE ) AS II_ChangeDate,
                   (   SELECT TOP 1 STOCKSNAME
                         FROM STK_SNAME_CHNG
                        WHERE ISVALID = 1
@@ -35,5 +35,5 @@ sql = """SELECT *
                         )
             ORDER BY a.MTIME, a.SEQ
        ) AS aa
- WHERE aa.OldStockName IS NOT NULL
+ WHERE aa.StockNameLat IS NOT NULL
  ORDER BY MTIME, Seq"""
