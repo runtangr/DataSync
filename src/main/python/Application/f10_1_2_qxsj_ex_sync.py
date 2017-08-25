@@ -36,9 +36,14 @@ class TableGetData(SyncBase.GetDataFromMssql):
             cqcxr = parse(result[headers.index("cqcxr")])
             zhjyr = result[headers.index("zhjyr")]
             qxbgq = parse(result[headers.index("qxbgq")])
-            rsstatus = result[headers.index("rsstatus")]
-            RsId = long(result[headers.index("rsMainkeyid")])
+            rsStatus = result[headers.index("rsStatus")]
+            RsId = long(result[headers.index("rsMainkeyID")])
             UpdateDateTime = parse(result[headers.index("UpdateDateTime")])
+
+            II_Date = result[headers.index("II_Date")]
+            II_cqcxr = result[headers.index("II_cqcxr")]
+            II_gqdjr = result[headers.index("II_gqdjr")]
+            II_qxbgq = result[headers.index("II_qxbgq")]
 
             if Obj is not None:
                 result = {"Obj": Obj, "StockShortName": StockShortName, "Date": Date,
@@ -48,9 +53,13 @@ class TableGetData(SyncBase.GetDataFromMssql):
                           "HouQianChuQuanPianYi": HouQianChuQuanPianYi,
                           "FhkgXinXi": FhkgXinXi, "gqdjr": gqdjr,
                           "cqcxr": cqcxr, "zhjyr": zhjyr,
-                          "qxbgq": qxbgq, "rsstatus": rsstatus,
+                          "qxbgq": qxbgq, "rsStatus": rsStatus,
                           "RsId": RsId,
-                          "UpdateDateTime": UpdateDateTime
+                          "UpdateDateTime": UpdateDateTime,
+                          "II_Date":II_Date,
+                          "II_cqcxr":II_cqcxr,
+                          "II_gqdjr":II_gqdjr,
+                          "II_qxbgq":II_qxbgq
                           }
                 results.append(result)
 
