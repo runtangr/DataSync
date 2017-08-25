@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 __author__ = "Sommily"
-sql = """SELECT TOP 500 a.SEQ AS Seq, a.MTIME AS Mtime,dbo.Date2Str( a.MTIME ) AS II_Mtime, CASE x.TRADE_MKT_REF
+sql = """SELECT TOP 500 a.SEQ AS Seq, a.MTIME AS Mtime,QKTZ20160429.dbo.Date2Str( a.MTIME ) AS II_Mtime, CASE x.TRADE_MKT_REF
                                                    WHEN 1 THEN 'SZ'
                                                    WHEN 2 THEN 'SH'
                                                    ELSE ''
@@ -14,10 +14,10 @@ sql = """SELECT TOP 500 a.SEQ AS Seq, a.MTIME AS Mtime,dbo.Date2Str( a.MTIME ) A
 	   , a.HINT_TYPE_CODE AS HintTypeCode
 	   , cast(a.HINT_TYPE_NAME as nvarchar(max)) AS HintTypeName
 	   , a.HINT_DT as HintDt
-	   ,dbo.Date2Str(a.HINT_DT) AS II_HintDt
+	   ,QKTZ20160429.dbo.Date2Str(a.HINT_DT) AS II_HintDt
 	   , cast(a.ESP_HINT as nvarchar(max)) as EspHint
 	   , a.DECLAREDATE DeclareDate
-	   ,dbo.Date2Str( a.DECLAREDATE ) AS II_DeclareDate
+	   ,QKTZ20160429.dbo.Date2Str( a.DECLAREDATE ) AS II_DeclareDate
   FROM NEWS_ESP_HINT AS a
   INNER JOIN STK_CODE AS x
           ON a.INNER_CODE = x.INNER_CODE
