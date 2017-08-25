@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 __author__ = "Cyh"
 sql = """
-SELECT CAST(id AS NVARCHAR(MAX)) AS RsId, StockCode, Obj, BaoGaoQi, dbo.Date2Str( BaoGaoQi ) AS II_BaoGaoQi,
-       ShangShiJia, ShangShiRiQi, dbo.Date2Str( ShangShiRiQi ) II_ShangShiRiQi,
+SELECT CAST(id AS NVARCHAR(MAX)) AS RsId, StockCode, Obj, BaoGaoQi, QKTZ20160429.dbo.Date2Str( BaoGaoQi ) AS II_BaoGaoQi,
+       ShangShiJia, ShangShiRiQi, QKTZ20160429.dbo.Date2Str( ShangShiRiQi ) II_ShangShiRiQi,
        MeiGuShouYi, MeiGuShouYiJiSuan, MeiGuJingZiChan, JingZiChanShouYiLv,
        MeiGuJingYingXianJin, MeiGuGongJiJin, MeiGuWeiFenPei, GuDongQuanYiBi,
        JingLiRunTongBi, YingYeShouRuTongBi, XiaoShouMaoLiLv, TiaoZhengMeiGuJingZi,
