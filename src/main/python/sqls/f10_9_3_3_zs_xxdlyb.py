@@ -13,7 +13,7 @@ sql = """SELECT TOP 500 CAST(rrm.SEQ AS NVARCHAR(MAX)) AS RsId,
    AND LEFT(rrm.RPT_TYPE, 1) IN (
                                     '1', '2', '3', '8', '9'
                                 )
-   AND (   rrm.CTIME >= '{@UpdateDateTime}'
-     AND   rrm.SEQ > '{@RsId}'
+   AND (   rrm.CTIME >= '{UpdateDateTime}'
+     AND   rrm.SEQ > '{RsId}'
        )
  ORDER BY rrm.CTIME, rrm.SEQ"""

@@ -19,7 +19,7 @@ sql = """SELECT TOP 500 CAST(nm.SEQ AS NVARCHAR(MAX)) AS Rsid,
    AND LEFT(ncr.CLS_CODE, 3) IN (
                                     '001', '002', '003', '004'
                                 )
-   AND (   nm.SEQ > '{@RsId}'
-     AND   nm.CTIME >= '{@UpdateDateTime}'
+   AND (   nm.SEQ > '{RsId}'
+     AND   nm.CTIME >= '{UpdateDateTime}'
        )
  ORDER BY nm.MTIME, nm.SEQ"""
