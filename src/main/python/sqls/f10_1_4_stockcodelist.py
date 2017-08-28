@@ -88,7 +88,7 @@ SELECT CAST(rsMainkeyID AS VARCHAR) AS RsId, rsDateTime AS UpdateDateTime,
            ELSE '其它'
        END AS TypeName, '1' AS StatusValue, '正常上市' AS StatusName,
        '20000101' AS StartDate, QKTZ20160429.dbo.Date2Str( '20000101' ) AS II_StartDate,
-       '' AS EndDate, '' AS II_EndDate
+       NULL AS EndDate, NULL AS II_EndDate
   FROM stocksoftdata..ViewStockSoft_commStockSection WITH ( NOLOCK )
  WHERE ( (   SYS_CODE = 3
        AND   SECTION_LEVEL = 1
