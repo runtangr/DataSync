@@ -46,7 +46,13 @@ sql = """SELECT TOP 1000 a.SEQ AS RsId, a.MTIME AS UpdateDateTime,
        b.ONL_VLD_APL AS wssghs, --网上申购户数
        b.ONL_VLD_SHR AS wsyxsggs, --网上有效申购股数
        a.STK_CLS AS gplx, -- 股票类型//A股 B股
-       b.LIST_EXCHANGE AS ssdd, --上市地点
+       CASE
+           WHEN b.LIST_EXCHANGE IS NOT NULL THEN b.LIST_EXCHANGE
+           ELSE CASE
+                    WHEN X.TRADE_MKT_REF = 1 THEN '深圳证券交易所'
+                    ELSE '上海证券交易所'
+                END
+       END AS ssdd, --上市地点
        ISS_CLS AS fxff, --发行方式
        b.ISS_PRC AS FaXingJia, --发行价格  元
        b.PE AS FaXingShiYingLu, --发行后摊博市盈率  年
