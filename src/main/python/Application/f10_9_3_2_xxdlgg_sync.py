@@ -8,6 +8,7 @@ import datetime
 import pymongo
 from dateutil.parser import parse
 import logging
+import decimal
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core import SyncBase
 
@@ -21,21 +22,14 @@ class TableGetData(SyncBase.GetDataFromMssql):
         results = []
         for result in tables:
 
-            RsId = result[headers.index("RsId")]
-            UpdateDateTime = parse(result[headers.index("UpdateDateTime")])
-            ZxDate = parse(result[headers.index("ZxDate")])
-            ZiXunId = result[headers.index("ZiXunId")]
-            ZiXunType = result[headers.index("ZiXunType")]
-            Obj = result[headers.index("Obj")]
-            StockCode = result[headers.index("StockCode")]
-            StockName = result[headers.index("StockName")]
-            Title = result[headers.index("Title")]
-
-            if Obj is not None:
-                result = {"RsId": RsId, "UpdateDateTime": UpdateDateTime, "ZxDate": ZxDate, "ZiXunId": ZiXunId,
-                          "ZiXunType": ZiXunType, "Obj": Obj, "StockCode": StockCode, "StockName": StockName,
-                          "Title": Title}
-                results.append(result)
+            tmp = {}
+            for i, header in enumerate(headers):
+                if result[i] != "" and result[i] is not None:
+                    if type(result[i]) == type(decimal.Decimal('1314')):
+                        tmp[headers[i]] = float(result[i])
+                    else:
+                        tmp[headers[i]] = result[i]
+            results.append(tmp)
 
         return results, max_update_datetime, max_rsid
 
