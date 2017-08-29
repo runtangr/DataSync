@@ -10,7 +10,9 @@ sql = """select top 500
 			   end + stk.STOCKCODE as StockCode
 		, stk.STOCKSNAME as StockName
 	from DISC_COM dco with(nolock)
-	inner join STK_CODE stk with(nolock) on stk.ISVALID = 1 and stk.COMCODE = dco.COMCODE
+	inner join STK_CODE stk with(nolock) on stk.ISVALID = 1 and stk.COMCODE = dco.COMCODE AND (   stk.TRADE_MKT_REF = 1
+            OR   stk.TRADE_MKT_REF = 2
+             )
 	where dco.ISVALID = 1 and dco.DECLAREDATE >= cast(CAST(YEAR(GETDATE())-2 AS VARCHAR) +'-01-01' as datetime)
 	  and ((dco.MTime = '{UpdateDateTime}' and dco.SEQ > '{RsId}') or (dco.MTime > '{UpdateDateTime}'))
   order by dco.MTime asc, dco.SEQ asc"""
