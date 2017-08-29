@@ -8,6 +8,7 @@ import datetime
 import pymongo
 from dateutil.parser import parse
 import logging
+import decimal
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core import SyncBase
 
@@ -21,27 +22,53 @@ class TableGetData(SyncBase.GetDataFromMssql):
         results = []
         for result in tables:
 
-            RsId = result[headers.index("RsId")]
-            UpdateDateTime = parse(result[headers.index("UpdateDateTime")])
-            ZxDate = parse(result[headers.index("ZxDate")])
-            ZiXunId = result[headers.index("ZiXunId")]
-            ZiXunType = result[headers.index("ZiXunType")]
-            Obj = result[headers.index("Obj")]
-            StockCode = result[headers.index("StockCode")]
-            StockName = result[headers.index("StockName")]
-            Title = result[headers.index("Title")]
-
-            if Obj is not None:
-                result = {"RsId": RsId, "UpdateDateTime": UpdateDateTime, "ZxDate": ZxDate, "ZiXunId": ZiXunId,
-                          "ZiXunType": ZiXunType, "Obj": Obj, "StockCode": StockCode, "StockName": StockName,
-                          "Title": Title}
-                results.append(result)
+            tmp = {}
+            for i, header in enumerate(headers):
+                if result[i] != "" and result[i] is not None:
+                    if type(result[i]) == type(decimal.Decimal('1314')):
+                        tmp[headers[i]] = float(result[i])
+                    else:
+                        tmp[headers[i]] = result[i]
+            results.append(tmp)
 
         return results, max_update_datetime, max_rsid
 
 
 class TableSaveData(SyncBase.SaveDataToDB):
 
-    pass
+    def SaveData(self,table_name=None, data=None):
+      #select
+      while True:
+          try:
+            count = self.db[table_name].find({"RsId":data["RsId"]}).count()
+            break
+          except pymongo.errors.AutoReconnect, e:
+            logging.error('AutoReconnect fail\n')
+            time.sleep(2)
+      if str(data["Status"]) == -1:
+
+        self.db[table_name].remove({"RsId":data["RsId"]})
+      else:
+
+          if count > 0:
+            #edit
+            try:
+                #logging
+                print("Edit ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
+                logging.info("Edit ：RsId = {0} Timestamp = {1}".format(data["RsId"],data["UpdateDateTime"]))
+                self.db[table_name].update({"RsId":data["RsId"]},{"$set":data})
+            except pymongo.errors.AutoReconnect, e:
+                logging.error('AutoReconnect fail\n')
+                time.sleep(2)
+          else:
+            #add
+            # logging
+            try:
+                print("Add ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
+                logging.info("Add ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
+                self.db[table_name].insert(data)
+            except pymongo.errors.AutoReconnect, e:
+                logging.error('AutoReconnect fail\n')
+                time.sleep(2)
 
 
