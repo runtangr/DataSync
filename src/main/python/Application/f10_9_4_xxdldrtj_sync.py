@@ -13,30 +13,41 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core import SyncBase
 
 class TableGetData(SyncBase.GetDataFromMssql):
-
-    def get_results(self, action_name, tables):
-        object_mapping = {}
-        headers = tables.pop(0)
-        max_update_datetime = datetime.datetime(year=1970, month=1, day=1)
-        max_rsid = ""
-        results = []
-        for result in tables:
-
-            RsId = result[headers.index("RsID")]
-            UpdateDateTime = result[headers.index("UpdateDateTime")]
-            ZxDate = result[headers.index("ZxDate")]
-            CountNum = result[headers.index("CountNum")]
-
-            Obj = result[headers.index("Obj")]
-
-            ZxType = result[headers.index("ZxType")]
-
-            if Obj is not None:
-                result = {"RsId": RsId, "UpdateDateTime": UpdateDateTime, "ZxDate": ZxDate, "CountNum": CountNum,
-                          "ZxType": ZxType, "Obj": Obj}
-                results.append(result)
-
-        return results, max_update_datetime, max_rsid
+    pass
 
 class TableSaveData(SyncBase.SaveDataToDB):
-    pass
+    def SaveData(self, table_name=None, data=None):
+        # select
+        while True:
+            try:
+                count = self.db[table_name].find({"RsId": data["RsId"]}).count()
+                break
+            except pymongo.errors.AutoReconnect, e:
+                logging.error('AutoReconnect fail\n')
+                time.sleep(2)
+        if int(data["Status"]) == -1:
+
+            self.db[table_name].remove({"RsId": long(data["RsId"])})
+        else:
+
+            if count > 0:
+                # edit
+                try:
+                    # logging
+                    print("Edit ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
+                    logging.info("Edit ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
+                    self.db[table_name].update({"RsId": data["RsId"]}, {"$set": data})
+                except pymongo.errors.AutoReconnect, e:
+                    logging.error('AutoReconnect fail\n')
+                    time.sleep(2)
+            else:
+                # add
+                # logging
+                try:
+                    print("Add ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
+                    logging.info("Add ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
+                    self.db[table_name].insert(data)
+                except pymongo.errors.AutoReconnect, e:
+                    logging.error('AutoReconnect fail\n')
+                    time.sleep(2)
+
