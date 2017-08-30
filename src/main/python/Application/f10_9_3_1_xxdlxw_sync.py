@@ -14,25 +14,7 @@ from core import SyncBase
 
 class TableGetData(SyncBase.GetDataFromMssql):
 
-    def get_results(self, action_name, tables):
-        object_mapping = {}
-        headers = tables.pop(0)
-        max_update_datetime = datetime.datetime(year=1970, month=1, day=1)
-        max_rsid = ""
-        results = []
-        for result in tables:
-
-            tmp = {}
-            for i, header in enumerate(headers):
-                if result[i] != "" and result[i] is not None:
-                    if type(result[i]) == type(decimal.Decimal('1314')):
-                        tmp[headers[i]] = float(result[i])
-                    else:
-                        tmp[headers[i]] = result[i]
-            results.append(tmp)
-
-        return results, max_update_datetime, max_rsid
-
+    pass
 
 class TableSaveData(SyncBase.SaveDataToDB):
 
@@ -45,9 +27,9 @@ class TableSaveData(SyncBase.SaveDataToDB):
           except pymongo.errors.AutoReconnect, e:
             logging.error('AutoReconnect fail\n')
             time.sleep(2)
-      if str(data["Status"]) == -1:
+      if int(data["Status"]) == -1:
 
-        self.db[table_name].remove({"RsId":data["RsId"]})
+        self.db[table_name].remove({"RsId":long(data["RsId"])})
       else:
 
           if count > 0:
