@@ -45,9 +45,9 @@ class TableSaveData(SyncBase.SaveDataToDB):
           except pymongo.errors.AutoReconnect, e:
             logging.error('AutoReconnect fail\n')
             time.sleep(2)
-      if str(data["Status"]) == -1:
+      if int(data["Status"]) == -1:
 
-        self.db[table_name].remove({"RsId":data["RsId"]})
+        self.db[table_name].remove({"RsId":long(data["RsId"])})
       else:
 
           if count > 0:
