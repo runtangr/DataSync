@@ -168,7 +168,7 @@ class SaveDataToDB(SyncSys):
   def get_db(cls):
       client = pymongo.MongoClient(os.environ.get("DBHost", "10.3.131.51"),
                                    int(os.environ.get("DBPort", "27019")))
-      db = client[os.environ.get("DBName", "F10Data3")]
+      db = client[os.environ.get("DBName", "F10data3")]
       return db
 
   def Save(self,table_name=None,MssqlData=None):

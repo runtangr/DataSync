@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
                   db_host=os.environ.get("DBHost", "10.3.131.51"),
                   db_port=int(os.environ.get("DBPort", "27019")),
-                  db_name=os.environ.get("DBName", "F10Data3")
+                  db_name=os.environ.get("DBName", "F10data3")
                   )
     #全量表
     full_table = ["f10_1_5_special_stockcodelist",
