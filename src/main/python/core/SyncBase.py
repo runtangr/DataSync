@@ -9,6 +9,7 @@ import pymongo
 from dateutil.parser import parse
 import logging
 import decimal
+import switch_time
 
 class SyncSys(object):
 
@@ -120,6 +121,11 @@ class GetDataFromMssql(SyncSys):
                       tmp[headers[i]] = float(result[i])
                   else:
                       tmp[headers[i]] = result[i]
+
+                  if type(result[i]) == type(datetime.datetime.now()) and headers[i] != u"UpdateDateTime":
+                      temp = switch_time.local2utc(result[i])
+                      tmp[headers[i]] = temp
+
           results.append(tmp)
 
       return results, max_update_datetime, max_rsid
@@ -184,8 +190,8 @@ class SaveDataToDB(SyncSys):
 
   @classmethod
   def get_db(cls):
-      client = pymongo.MongoClient(os.environ.get("DBHost", "10.3.131.51"),
-                                   int(os.environ.get("DBPort", "27019")))
+      client = pymongo.MongoClient(os.environ.get("DBHost", "10.0.2.15"),
+                                   int(os.environ.get("DBPort", "27017")))
       db = client[os.environ.get("DBName", "F10data3")]
       return db
 

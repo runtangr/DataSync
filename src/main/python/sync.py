@@ -24,8 +24,8 @@ if __name__ == '__main__':
 
     DBObj = sync_table.TableSaveData(
 
-                  db_host=os.environ.get("DBHost", "10.3.131.51"),
-                  db_port=int(os.environ.get("DBPort", "27019")),
+                  db_host=os.environ.get("DBHost", "10.0.2.15"),
+                  db_port=int(os.environ.get("DBPort", "27017")),
                   db_name=os.environ.get("DBName", "F10data3")
                   )
     #全量表

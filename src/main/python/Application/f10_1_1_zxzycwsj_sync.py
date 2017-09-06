@@ -10,8 +10,11 @@ import pymongo
 from dateutil.parser import parse
 import logging
 import decimal
+
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core import SyncBase
+from core import switch_time
 
 class TableGetData(SyncBase.GetDataFromMssql):
 
@@ -35,6 +38,11 @@ class TableGetData(SyncBase.GetDataFromMssql):
                         tmp[headers[i]] = float(result[i])
                     else:
                         tmp[headers[i]] = result[i]
+
+                    if type(result[i]) == type(datetime.datetime.now()) and headers[i]!=u"UpdateDateTime":
+                        temp = switch_time.local2utc(result[i])
+                        tmp[headers[i]] = temp
+
             results.append(tmp)
 
         return results, max_update_datetime, max_rsid

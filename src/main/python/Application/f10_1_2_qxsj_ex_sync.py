@@ -11,6 +11,7 @@ from dateutil.parser import parse
 import logging
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core import SyncBase
+from core import switch_time
 
 class TableGetData(SyncBase.GetDataFromMssql):
     def get_results(self, action_name, tables):
@@ -24,18 +25,18 @@ class TableGetData(SyncBase.GetDataFromMssql):
             Obj = result[headers.index("Obj")]
 
             StockShortName = result[headers.index("StockShortName")]
-            Date = parse(result[headers.index("Date")])
+            Date = result[headers.index("Date")]
             QianChuQuanChengShu = float(result[headers.index("QianChuQuanChengShu")])
             QianChuQuanPianYi = float(result[headers.index("QianChuQuanPianYi")])
             HouChuQuanChengShu = float(result[headers.index("HouChuQuanChengShu")])
 
             HouQianChuQuanPianYi = float(result[headers.index("HouQianChuQuanPianYi")])
             FhkgXinXi = result[headers.index("FhkgXinXi")]
-            gqdjr = parse(result[headers.index("gqdjr")])
+            gqdjr = result[headers.index("gqdjr")]
 
-            cqcxr = parse(result[headers.index("cqcxr")])
+            cqcxr = result[headers.index("cqcxr")]
             zhjyr = result[headers.index("zhjyr")]
-            qxbgq = parse(result[headers.index("qxbgq")])
+            qxbgq = result[headers.index("qxbgq")]
             rsStatus = result[headers.index("rsStatus")]
             RsId = long(result[headers.index("rsMainkeyID")])
             UpdateDateTime = parse(result[headers.index("UpdateDateTime")])
