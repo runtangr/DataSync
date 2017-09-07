@@ -230,7 +230,8 @@ class SaveDataToDB(SyncSys):
             #logging
             print("Edit ：RsId = {0} Timestamp = {1}".format(data["RsId"], data["UpdateDateTime"]))
             logging.info("Edit ：RsId = {0} Timestamp = {1}".format(data["RsId"],data["UpdateDateTime"]))
-            self.db[table_name].update({"RsId":data["RsId"]},{"$set":data})
+            self.db[table_name].remove({"RsId": data["RsId"]})
+            self.db[table_name].insert(data)
         except pymongo.errors.AutoReconnect, e:
             logging.error('AutoReconnect fail\n')
             time.sleep(2)
